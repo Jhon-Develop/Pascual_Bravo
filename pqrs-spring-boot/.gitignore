@@ -1,0 +1,28 @@
+# Maven / build
+target/
+*.class
+*.jar
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local runtime data and logs
+data/
+*.log
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+application-local.yml
+
+# Temporary files
+*.tmp
+*.swp
