@@ -37,34 +37,57 @@ El proyecto sigue una organización por responsabilidades: la API recibe peticio
 
 ```mermaid
 flowchart LR
-    Client[Cliente HTTP / Frontend]
-    Controller[API REST<br/>Controllers + DTOs]
-    Service[Application<br/>PqrsService]
-    Domain[Domain<br/>Estados + Tipos + Reglas]
-    Repo[Repository<br/>Spring Data JPA]
-    DB[(MySQL<br/>Clever Cloud)]
-    Events[Application Events]
-    Mail[Gmail SMTP<br/>Email Adapter]
 
-    Client --> Controller
-    Controller --> Service
-    Service --> Domain
-    Service --> Repo
-    Repo --> DB
-    Service --> Events
-    Events --> Mail
+    Client[Cliente HTTP / Frontend]
+
+    Controller[API REST<br/>Controllers + DTOs]
+
+    Service[Application<br/>PqrsService]
+
+    Domain[Domain<br/>Estados + Tipos + Reglas]
+
+    Repo[Repository<br/>Spring Data JPA]
+
+    DB[(MySQL<br/>Clever Cloud)]
+
+    Events[Application Events]
+
+    Mail[Gmail SMTP<br/>Email Adapter]
+
+    Client --> Controller
+
+    Controller --> Service
+
+    Service --> Domain
+
+    Service --> Repo
+
+    Repo --> DB
+
+    Service --> Events
+
+    Events --> Mail
+
 ```
 
 ### ¿Por qué cada cosa está donde está?
 
 | Carpeta | Responsabilidad | Qué NO debería hacer |
+
 |---|---|---|
+
 | `api/rest` | HTTP, JSON, validación y DTOs | Consultar MySQL directamente |
+
 | `application` | Coordinar casos de uso y publicar eventos | Contener detalles de SMTP o JDBC |
+
 | `domain` | Estados, tipos y reglas de negocio | Saber que existe MySQL, Gmail o Spring MVC |
+
 | `infrastructure/persistence` | Entidades JPA y repositorios | Definir la lógica de los casos de uso |
+
 | `infrastructure/email` | Integración real con Gmail/SMTP | Decidir reglas de negocio |
+
 | `infrastructure/config` | Seed y monitor programado | Resolver lógica HTTP |
+
 | `resources/db/migration` | Evolución versionada del esquema | Contener lógica Java |
 
 La idea es que cada capa tenga una razón concreta para existir. Esto reduce el acoplamiento y facilita cambiar una tecnología sin tener que modificar todo el proyecto.
@@ -74,45 +97,47 @@ La idea es que cada capa tenga una razón concreta para existir. Esto reduce el 
 ## 3. Estructura del proyecto
 
 ```text
+
 pqrs-spring-boot/
+
 ├── database/
-│   └── schema-mysql.sql
+│   └── schema-mysql.sql
 ├── src/
-│   ├── main/
-│   │   ├── java/com/pqrs/microservice/
-│   │   │   ├── api/rest/
-│   │   │   │   ├── dto/
-│   │   │   │   ├── ApiExceptionHandler.java
-│   │   │   │   ├── PqrsController.java
-│   │   │   │   └── ResponsibleController.java
-│   │   │   │
-│   │   │   ├── application/
-│   │   │   │   ├── event/
-│   │   │   │   ├── port/out/
-│   │   │   │   │   └── EmailSenderPort.java
-│   │   │   │   └── PqrsService.java
-│   │   │   │
-│   │   │   ├── domain/
-│   │   │   │   ├── enums/
-│   │   │   │   └── exception/
-│   │   │   │
-│   │   │   ├── infrastructure/
-│   │   │   │   ├── config/
-│   │   │   │   ├── email/
-│   │   │   │   └── persistence/
-│   │   │   │       ├── entity/
-│   │   │   │       └── repository/
-│   │   │   │
-│   │   │   └── PqrsApplication.java
-│   │   │
-│   │   └── resources/
-│   │       ├── db/migration/
-│   │       │   ├── h2/
-│   │       │   └── mysql/
-│   │       └── application.yml
-│   │
-│   └── test/
-│       └── java/com/pqrs/microservice/
+│   ├── main/
+│   │   ├── java/com/pqrs/microservice/
+│   │   │   ├── api/rest/
+│   │   │   │   ├── dto/
+│   │   │   │   ├── ApiExceptionHandler.java
+│   │   │   │   ├── PqrsController.java
+│   │   │   │   └── ResponsibleController.java
+│   │   │   │
+│   │   │   ├── application/
+│   │   │   │   ├── event/
+│   │   │   │   ├── port/out/
+│   │   │   │   │   └── EmailSenderPort.java
+│   │   │   │   └── PqrsService.java
+│   │   │   │
+│   │   │   ├── domain/
+│   │   │   │   ├── enums/
+│   │   │   │   └── exception/
+│   │   │   │
+│   │   │   ├── infrastructure/
+│   │   │   │   ├── config/
+│   │   │   │   ├── email/
+│   │   │   │   └── persistence/
+│   │   │   │       ├── entity/
+│   │   │   │       └── repository/
+│   │   │   │
+│   │   │   └── PqrsApplication.java
+│   │   │
+│   │   └── resources/
+│   │       ├── db/migration/
+│   │       │   ├── h2/
+│   │       │   └── mysql/
+│   │       └── application.yml
+│   │
+│   └── test/
+│       └── java/com/pqrs/microservice/
 ├── .env.example
 ├── .gitignore
 ├── Dockerfile
@@ -128,29 +153,51 @@ pqrs-spring-boot/
 ## 4. Flujo completo de una PQRS
 
 ```mermaid
-sequenceDiagram
-    actor Usuario as Ciudadano / Cliente
-    participant API as PqrsController
-    participant App as PqrsService
-    participant Repo as Spring Data Repository
-    participant DB as MySQL
-    participant Event as Application Event
-    participant Gmail as Gmail SMTP
 
-    Usuario->>API: POST /api/v1/pqrs
-    API->>App: CreatePqrsRequest
-    App->>Repo: Buscar ciudadano
-    Repo->>DB: SELECT
-    App->>Repo: Guardar ciudadano si es nuevo
-    Repo->>DB: INSERT
-    App->>Repo: Guardar PQRS
-    Repo->>DB: INSERT
-    App->>Repo: Guardar referencia RAD-AAAA-XXXX
-    Repo->>DB: UPDATE
-    App->>Event: Publicar PqrsCreatedEvent
-    DB-->>App: Commit
-    Event->>Gmail: Enviar confirmación (opcional)
-    API-->>Usuario: PqrsResponse
+sequenceDiagram
+
+    actor Usuario as Ciudadano / Cliente
+
+    participant API as PqrsController
+
+    participant App as PqrsService
+
+    participant Repo as Spring Data Repository
+
+    participant DB as MySQL
+
+    participant Event as Application Event
+
+    participant Gmail as Gmail SMTP
+
+    Usuario->>API: POST /api/v1/pqrs
+
+    API->>App: CreatePqrsRequest
+
+    App->>Repo: Buscar ciudadano
+
+    Repo->>DB: SELECT
+
+    App->>Repo: Guardar ciudadano si es nuevo
+
+    Repo->>DB: INSERT
+
+    App->>Repo: Guardar PQRS
+
+    Repo->>DB: INSERT
+
+    App->>Repo: Guardar referencia RAD-AAAA-XXXX
+
+    Repo->>DB: UPDATE
+
+    App->>Event: Publicar PqrsCreatedEvent
+
+    DB-->>App: Commit
+
+    Event->>Gmail: Enviar confirmación (opcional)
+
+    API-->>Usuario: PqrsResponse
+
 ```
 
 El correo se escucha en la fase `AFTER_COMMIT`: primero se confirma la operación de negocio y luego se intenta notificar. Así, una caída de Gmail no convierte una PQRS registrada correctamente en una operación fallida.
@@ -160,32 +207,51 @@ El correo se escucha en la fase `AFTER_COMMIT`: primero se confirma la operació
 ## 5. Ciclo de vida y reglas de negocio
 
 ```mermaid
+
 stateDiagram-v2
-    [*] --> RADICADA
-    RADICADA --> ASIGNADA: asignar responsable
-    ASIGNADA --> EN_GESTION: responsable asignado
-    ASIGNADA --> RESPONDIDA: registrar respuesta
-    EN_GESTION --> RESPONDIDA: registrar respuesta
-    RESPONDIDA --> CERRADA: cerrar caso
-    CERRADA --> [*]
+
+    [*] --> RADICADA
+
+    RADICADA --> ASIGNADA: asignar responsable
+
+    ASIGNADA --> EN_GESTION: responsable asignado
+
+    ASIGNADA --> RESPONDIDA: registrar respuesta
+
+    EN_GESTION --> RESPONDIDA: registrar respuesta
+
+    RESPONDIDA --> CERRADA: cerrar caso
+
+    CERRADA --> [*]
+
 ```
 
 Reglas principales:
 
 1. Una PQRS debe tener responsable antes de pasar a `EN_GESTION`.
+
 2. Solo `ASIGNADA` puede pasar a `EN_GESTION`.
+
 3. La respuesta puede registrarse desde `ASIGNADA` o `EN_GESTION`.
+
 4. No se puede cerrar una PQRS sin respuesta.
+
 5. Solo una PQRS `RESPONDIDA` puede cerrarse.
+
 6. Una PQRS cerrada no puede reasignarse.
 
 Los plazos viven en `PqrsType`:
 
 | Tipo | Máximo de respuesta |
+
 |---|---:|
+
 | `PETICION` | 15 días |
+
 | `QUEJA` | 5 días |
+
 | `RECLAMO` | 5 días |
+
 | `SUGERENCIA` | 10 días |
 
 ---
@@ -195,48 +261,83 @@ Los plazos viven en `PqrsType`:
 El modelo se basa en cuatro entidades persistentes. Un ciudadano puede registrar muchas PQRS; una PQRS puede tener un responsable; una PQRS puede tener una respuesta; y cada respuesta tiene un responsable autor.
 
 ```mermaid
+
 erDiagram
-    CITIZENS ||--o{ PQRS : registra
-    RESPONSIBLES ||--o{ PQRS : atiende
-    RESPONSIBLES ||--o{ ANSWERS : redacta
-    ANSWERS ||--o| PQRS : pertenece
 
-    CITIZENS {
-        BIGINT id PK
-        VARCHAR document UK
-        VARCHAR name
-        VARCHAR email
-        VARCHAR phone
-    }
+    CITIZENS ||--o{ PQRS : registra
 
-    RESPONSIBLES {
-        BIGINT id PK
-        VARCHAR document UK
-        VARCHAR name
-        VARCHAR email
-        VARCHAR area
-        VARCHAR role
-    }
+    RESPONSIBLES ||--o{ PQRS : atiende
 
-    PQRS {
-        BIGINT id PK
-        VARCHAR reference UK
-        VARCHAR type
-        VARCHAR description
-        VARCHAR state
-        DATE created_date
-        DATE limited_date
-        BIGINT citizen_id FK
-        BIGINT responsible_id FK
-        BIGINT answer_id FK UK
-    }
+    RESPONSIBLES ||--o{ ANSWERS : redacta
 
-    ANSWERS {
-        BIGINT id PK
-        VARCHAR content
-        DATE answer_date
-        BIGINT author_id FK
-    }
+    ANSWERS ||--o| PQRS : pertenece
+
+    CITIZENS {
+
+        BIGINT id PK
+
+        VARCHAR document UK
+
+        VARCHAR name
+
+        VARCHAR email
+
+        VARCHAR phone
+
+    }
+
+    RESPONSIBLES {
+
+        BIGINT id PK
+
+        VARCHAR document UK
+
+        VARCHAR name
+
+        VARCHAR email
+
+        VARCHAR area
+
+        VARCHAR role
+
+    }
+
+    PQRS {
+
+        BIGINT id PK
+
+        VARCHAR reference UK
+
+        VARCHAR type
+
+        VARCHAR description
+
+        VARCHAR state
+
+        DATE created_date
+
+        DATE limited_date
+
+        BIGINT citizen_id FK
+
+        BIGINT responsible_id FK
+
+        BIGINT answer_id FK
+
+    }
+
+    ANSWERS {
+
+        BIGINT id PK
+
+        VARCHAR content
+
+        DATE answer_date
+
+        BIGINT author_id FK
+
+    }
+
 ```
 
 ### Por qué este modelo
@@ -260,25 +361,37 @@ El repositorio es la frontera entre el caso de uso y la persistencia.
 Ejemplo:
 
 ```java
+
 public interface PqrsRepository extends JpaRepository<PqrsEntity, Long> {
-    Optional<PqrsEntity> findByReferenceIgnoreCase(String reference);
-    List<PqrsEntity> findAllByStateNotAndLimitedDateBefore(
-        PqrsState state,
-        LocalDate date
-    );
+
+    Optional<PqrsEntity> findByReferenceIgnoreCase(String reference);
+
+    List<PqrsEntity> findAllByStateNotAndLimitedDateBefore(
+
+        PqrsState state,
+
+        LocalDate date
+
+    );
+
 }
+
 ```
 
 La capa de aplicación puede decir:
 
 ```java
+
 pqrsRepository.findByReferenceIgnoreCase(reference);
+
 ```
 
 sin construir manualmente:
 
 ```sql
+
 SELECT ... FROM pqrs WHERE reference = ?;
+
 ```
 
 Spring Data JPA genera la implementación del repositorio y utiliza el `DataSource` configurado por Spring Boot.
@@ -288,19 +401,31 @@ Spring Data JPA genera la implementación del repositorio y utiliza el `DataSour
 El Repository Pattern **no es el mecanismo que protege una contraseña**. La separación correcta es:
 
 ```mermaid
-flowchart TB
-    Env[Variables de entorno / .env local]
-    Config[application.yml]
-    DataSource[Spring DataSource]
-    Repository[Spring Data Repository]
-    Service[PqrsService]
-    DB[(MySQL)]
 
-    Env --> Config
-    Config --> DataSource
-    DataSource --> Repository
-    Repository --> DB
-    Service --> Repository
+flowchart TB
+
+    Env[Variables de entorno / .env local]
+
+    Config[application.yml]
+
+    DataSource[Spring DataSource]
+
+    Repository[Spring Data Repository]
+
+    Service[PqrsService]
+
+    DB[(MySQL)]
+
+    Env --> Config
+
+    Config --> DataSource
+
+    DataSource --> Repository
+
+    Repository --> DB
+
+    Service --> Repository
+
 ```
 
 Las credenciales viven fuera del código. El repositorio encapsula la persistencia.
@@ -314,13 +439,17 @@ Spring Boot soporta configuración externa y propiedades importadas desde archiv
 El ZIP incluye un `.env` de plantilla sin credenciales reales. Si partes del `.env.example`, puedes recrearlo así:
 
 ```bash
+
 cp .env.example .env
+
 ```
 
 En Windows puedes copiarlo desde el explorador o con PowerShell:
 
 ```powershell
+
 Copy-Item .env.example .env
+
 ```
 
 ### Para desarrollo con H2
@@ -328,20 +457,31 @@ Copy-Item .env.example .env
 En `.env`:
 
 ```env
+
 SPRING_PROFILES_ACTIVE=dev
+
 SEED_DATA_ENABLED=true
+
 MAIL_ENABLED=false
+
 ```
 
 ### Para MySQL local
 
 ```env
+
 SPRING_PROFILES_ACTIVE=mysql
+
 DB_HOST=localhost
+
 DB_PORT=3306
+
 DB_NAME=pqrs
+
 DB_USERNAME=pqrs_app
+
 DB_PASSWORD=pqrs_app
+
 ```
 
 ### Para Clever Cloud
@@ -359,15 +499,23 @@ Clever Cloud ofrece MySQL como add-on y documenta las variables de entorno que s
 ### Pasos
 
 1. Crea una aplicación Java/Maven o Docker en Clever Cloud.
+
 2. Crea un add-on `MySQL`.
+
 3. Vincula el add-on con la aplicación.
+
 4. Verifica que las variables `MYSQL_ADDON_*` estén presentes.
+
 5. Configura:
 
 ```env
+
 SPRING_PROFILES_ACTIVE=mysql
+
 SEED_DATA_ENABLED=false
+
 MAIL_ENABLED=false
+
 ```
 
 6. Despliega.
@@ -385,13 +533,17 @@ En producción no conviene que Hibernate modifique automáticamente el esquema. 
 La primera migración es:
 
 ```text
+
 src/main/resources/db/migration/mysql/V1__create_schema.sql
+
 ```
 
 Y existe una versión equivalente para H2:
 
 ```text
+
 src/main/resources/db/migration/h2/V1__create_schema.sql
+
 ```
 
 Spring Boot admite Flyway para inicialización y migraciones; el soporte de MySQL requiere el módulo específico `flyway-mysql`. Las migraciones siguen el formato `V<VERSION>__<NAME>.sql`.
@@ -399,7 +551,9 @@ Spring Boot admite Flyway para inicialización y migraciones; el soporte de MySQ
 Puedes revisar el estado desde:
 
 ```text
+
 GET /actuator/flyway
+
 ```
 
 ---
@@ -409,7 +563,9 @@ GET /actuator/flyway
 Si quieres crear la base de datos manualmente antes de conectar Spring Boot, tienes:
 
 ```text
+
 database/schema-mysql.sql
+
 ```
 
 Este archivo representa la misma estructura de la migración `V1__create_schema.sql`.
@@ -417,7 +573,9 @@ Este archivo representa la misma estructura de la migración `V1__create_schema.
 Ejemplo de conexión:
 
 ```bash
+
 mysql -h HOST -P PORT -u USER -p DATABASE < database/schema-mysql.sql
+
 ```
 
 ---
@@ -429,31 +587,51 @@ Spring Boot auto-configura `JavaMailSender` cuando está disponible el starter d
 ### Flujo
 
 ```mermaid
-flowchart LR
-    Pqrs[PqrsService]
-    Event[Evento de aplicación]
-    Listener[Email Notification Handler]
-    Port[EmailSenderPort]
-    Adapter[GmailEmailAdapter]
-    SMTP[smtp.gmail.com:587]
-    User[Correo ciudadano / responsable]
 
-    Pqrs --> Event
-    Event --> Listener
-    Listener --> Port
-    Port --> Adapter
-    Adapter --> SMTP
-    SMTP --> User
+flowchart LR
+
+    Pqrs[PqrsService]
+
+    Event[Evento de aplicación]
+
+    Listener[Email Notification Handler]
+
+    Port[EmailSenderPort]
+
+    Adapter[GmailEmailAdapter]
+
+    SMTP[smtp.gmail.com:587]
+
+    User[Correo ciudadano / responsable]
+
+    Pqrs --> Event
+
+    Event --> Listener
+
+    Listener --> Port
+
+    Port --> Adapter
+
+    Adapter --> SMTP
+
+    SMTP --> User
+
 ```
 
 ### Configuración local
 
 ```env
+
 MAIL_ENABLED=true
+
 GMAIL_USERNAME=tu_correo@gmail.com
+
 GMAIL_APP_PASSWORD=xxxx_xxxx_xxxx_xxxx
+
 MAIL_FROM=tu_correo@gmail.com
+
 MAIL_FROM_NAME=PQRS Microservice
+
 ```
 
 Google indica que las contraseñas de aplicación requieren que la cuenta tenga activada la verificación en dos pasos. Para el adaptador SMTP de este proyecto se utiliza una contraseña de aplicación, nunca la contraseña normal de la cuenta.
@@ -463,13 +641,17 @@ Google indica que las contraseñas de aplicación requieren que la cuenta tenga 
 ### ¿Cuándo se envía correo?
 
 - Al radicar una PQRS: confirmación al ciudadano, si tiene correo.
+
 - Al asignar una PQRS: aviso al responsable, si tiene correo.
+
 - Al registrar una respuesta: notificación al ciudadano, si tiene correo.
 
 Puedes desactivar toda esta integración con:
 
 ```env
+
 MAIL_ENABLED=false
+
 ```
 
 El `NoOpEmailAdapter` permite ejecutar el proyecto sin Gmail configurado.
@@ -481,20 +663,27 @@ El `NoOpEmailAdapter` permite ejecutar el proyecto sin Gmail configurado.
 El seed ya no corre automáticamente en cualquier entorno. Se activa explícitamente:
 
 ```env
+
 SEED_DATA_ENABLED=true
+
 ```
 
 Responsables de demostración:
 
 | Documento | Nombre | Rol | Área |
+
 |---|---|---|---|
+
 | `987654321` | Ana Gomez | `ANALISTA` | Soporte Tecnico |
+
 | `112233445` | Roberto Silva | `SUPERVISOR` | Soporte Tecnico |
 
 Para Clever Cloud se recomienda dejar:
 
 ```env
+
 SEED_DATA_ENABLED=false
+
 ```
 
 ---
@@ -504,100 +693,149 @@ SEED_DATA_ENABLED=false
 ### Registrar PQRS
 
 ```http
+
 POST /api/v1/pqrs
+
 Content-Type: application/json
+
 ```
 
 ```json
+
 {
-  "type": "QUEJA",
-  "description": "El servicio presentó intermitencias durante el fin de semana.",
-  "citizen": {
-    "document": "101823948",
-    "name": "Carlos Mendoza",
-    "email": "carlos@gmail.com",
-    "phone": "3001234567"
-  }
+
+  "type": "QUEJA",
+
+  "description": "El servicio presentó intermitencias durante el fin de semana.",
+
+  "citizen": {
+
+    "document": "101823948",
+
+    "name": "Carlos Mendoza",
+
+    "email": "carlos@gmail.com",
+
+    "phone": "3001234567"
+
+  }
+
 }
+
 ```
 
 ### Consultar una PQRS
 
 ```http
+
 GET /api/v1/pqrs/RAD-2026-0001
+
 ```
 
 ### Consultar todas
 
 ```http
+
 GET /api/v1/pqrs
+
 ```
 
 ### Consultar responsables
 
 ```http
+
 GET /api/v1/responsibles
+
 ```
 
 ### Crear o actualizar responsable
 
 ```http
+
 POST /api/v1/responsibles
+
 ```
 
 ```json
+
 {
-  "document": "123456789",
-  "name": "Laura Perez",
-  "email": "laura.perez@empresa.com",
-  "area": "Atencion al Cliente",
-  "role": "ANALISTA"
+
+  "document": "123456789",
+
+  "name": "Laura Perez",
+
+  "email": "laura.perez@empresa.com",
+
+  "area": "Atencion al Cliente",
+
+  "role": "ANALISTA"
+
 }
+
 ```
 
 ### Asignar responsable
 
 ```http
+
 POST /api/v1/pqrs/{reference}/assignment
+
 ```
 
 ### Pasar a gestión
 
 ```http
+
 POST /api/v1/pqrs/{reference}/management
+
 ```
 
 ### Registrar respuesta
 
 ```http
+
 POST /api/v1/pqrs/{reference}/answer
+
 ```
 
 ```json
+
 {
-  "content": "Se realizó mantenimiento preventivo y el servicio fue restablecido.",
-  "authorDocument": "987654321"
+
+  "content": "Se realizó mantenimiento preventivo y el servicio fue restablecido.",
+
+  "authorDocument": "987654321"
+
 }
+
 ```
 
 ### Cerrar caso
 
 ```http
+
 POST /api/v1/pqrs/{reference}/close
+
 ```
 
 ### Alertas vencidas
 
 ```http
+
 GET /api/v1/pqrs/alerts/expired
+
 ```
 
 ### Actuator
 
 ```http
+
 GET /actuator/health
+
 GET /actuator/metrics
+
 GET /actuator/flyway
+
 ```
 
 ---
@@ -607,12 +845,17 @@ GET /actuator/flyway
 Esta opción es ideal para aprender el código y probar la lógica sin levantar MySQL.
 
 1. Copia `.env.example` a `.env`.
+
 2. Deja:
 
 ```env
+
 SPRING_PROFILES_ACTIVE=dev
+
 SEED_DATA_ENABLED=true
+
 MAIL_ENABLED=false
+
 ```
 
 3. Verifica que `.env` contenga la configuración local (el proyecto ya incluye una plantilla).
@@ -620,13 +863,17 @@ MAIL_ENABLED=false
 4. Ejecuta:
 
 ```bash
+
 mvn spring-boot:run
+
 ```
 
 La aplicación usará H2 en:
 
 ```text
+
 ./data/pqrsdb
+
 ```
 
 No necesitas instalar MySQL para este modo.
@@ -636,14 +883,19 @@ No necesitas instalar MySQL para este modo.
 ## 16. Ejecución con MySQL local usando Docker
 
 ```bash
+
 docker compose up --build
+
 ```
 
 La composición levanta:
 
 ```text
+
 MySQL 8.4 -> localhost:3306
-API       -> localhost:8080
+
+API       -> localhost:8080
+
 ```
 
 El contenedor de la API usa el perfil `mysql` y Flyway crea el esquema automáticamente.
@@ -651,13 +903,17 @@ El contenedor de la API usa el perfil `mysql` y Flyway crea el esquema automáti
 Para detenerlo:
 
 ```bash
+
 docker compose down
+
 ```
 
 Para borrar también los datos locales:
 
 ```bash
+
 docker compose down -v
+
 ```
 
 ---
@@ -667,7 +923,9 @@ docker compose down -v
 Ejecuta:
 
 ```bash
+
 mvn test
+
 ```
 
 Las pruebas existentes verifican las reglas del dominio: cálculo de fechas, restricciones de transición y ciclo completo de una PQRS.
@@ -681,15 +939,25 @@ Una evolución recomendada es añadir pruebas de integración con MySQL mediante
 Lee el proyecto en este orden:
 
 ```mermaid
+
 flowchart TD
-    A[PqrsController] --> B[DTO Request / Response]
-    B --> C[PqrsService]
-    C --> D[PqrsEntity]
-    D --> E[PqrsState + PqrsType]
-    C --> F[PqrsRepository]
-    F --> G[MySQL / H2]
-    C --> H[Application Events]
-    H --> I[Gmail Adapter]
+
+    A[PqrsController] --> B[DTO Request / Response]
+
+    B --> C[PqrsService]
+
+    C --> D[PqrsEntity]
+
+    D --> E[PqrsState + PqrsType]
+
+    C --> F[PqrsRepository]
+
+    F --> G[MySQL / H2]
+
+    C --> H[Application Events]
+
+    H --> I[Gmail Adapter]
+
 ```
 
 ### Paso 1 · Controller
@@ -729,11 +997,17 @@ Entiende cómo una tecnología externa se encapsula detrás de `EmailSenderPort`
 No se mantiene una herencia `Complaint / Claim / Request / Suggestion`. La diferencia principal entre tipos es el plazo, por lo que un enum mantiene el modelo más sencillo:
 
 ```text
+
 PqrsType
-├── PETICION    -> 15 días
-├── QUEJA       -> 5 días
-├── RECLAMO     -> 5 días
-└── SUGERENCIA  -> 10 días
+
+├── PETICION    -> 15 días
+
+├── QUEJA       -> 5 días
+
+├── RECLAMO     -> 5 días
+
+└── SUGERENCIA  -> 10 días
+
 ```
 
 ### Referencia generada por la base de datos
@@ -741,13 +1015,17 @@ PqrsType
 La referencia se construye después de persistir el ID:
 
 ```text
+
 RAD-<año>-<id de 4 dígitos>
+
 ```
 
 Ejemplo:
 
 ```text
+
 RAD-2026-0001
+
 ```
 
 Esto evita un contador estático de JVM y funciona mejor si existen varias instancias del microservicio.
@@ -765,13 +1043,21 @@ Esta decisión facilita cambiar Gmail por otro proveedor en el futuro sin reescr
 Estas mejoras no son necesarias para entender la versión actual, pero son buenos siguientes pasos para llevarla hacia un microservicio de producción más completo:
 
 - **Spring Security + JWT** para autenticación/autorización.
+
 - **Roles y permisos** para ciudadanos, responsables y administradores.
+
 - **Auditoría** (`created_by`, `updated_by`, cambios de estado y fechas).
+
 - **Paginación y filtros** por estado, tipo, responsable y fechas.
+
 - **OpenAPI / Swagger UI** para una documentación interactiva.
+
 - **Testcontainers con MySQL** para pruebas de integración reales.
+
 - **Plantillas HTML de correo** con Thymeleaf.
+
 - **Cola de mensajería** (RabbitMQ/Kafka) cuando el volumen requiera separar completamente la notificación del request HTTP.
+
 - **Observabilidad** con trazas y métricas más completas si el ecosistema de microservicios crece.
 
 ---
@@ -779,17 +1065,27 @@ Estas mejoras no son necesarias para entender la versión actual, pero son bueno
 ## 21. Resumen de la filosofía del proyecto
 
 ```text
+
 HTTP
- ↓
+
+ ↓
+
 Controller
- ↓
+
+ ↓
+
 Application Service
- ↓
+
+ ↓
+
 Domain rules + Repository
- ↓
+
+ ↓
+
 Database
 
-        +---- Application Event ----> Email Adapter -> Gmail
+        +---- Application Event ----> Email Adapter -> Gmail
+
 ```
 
 La regla general es sencilla:
@@ -803,10 +1099,365 @@ Con esta separación el proyecto es más fácil de estudiar hoy y más fácil de
 ## 22. Referencias oficiales
 
 - [Spring Boot · Externalized Configuration](https://docs.spring.io/spring-boot/reference/features/external-config.html)
+
 - [Spring Boot · Sending Email](https://docs.spring.io/spring-boot/reference/io/email.html)
+
 - [Spring Boot · Database Initialization / Flyway](https://docs.spring.io/spring-boot/how-to/data-initialization.html)
+
 - [Flyway · MySQL support](https://documentation.red-gate.com/fd/mysql-277579322.html)
+
 - [Clever Cloud · MySQL](https://www.clever-cloud.com/developers/doc/addons/mysql/)
+
 - [Clever Cloud · Environment Variables](https://www.clever-cloud.com/developers/doc/reference/reference-environment-variables/)
+
 - [Google · App Passwords](https://support.google.com/mail/answer/185833?hl=es-419)
+
 - [Google · 2-Step Verification](https://support.google.com/mail/answer/185839?co=GENIE.Platform%3DAndroid&hl=en)
+
+23. Diagrama de clases
+
+El siguiente diagrama representa la estructura principal de clases de la versión actual del proyecto y muestra cómo se relacionan las capas de API REST, aplicación, persistencia, dominio y configuración.
+
+classDiagram
+    direction LR
+
+    namespace api_rest {
+        class PqrsController {
+            -PqrsService service
+            +create(CreatePqrsRequest) PqrsResponse
+            +findAll() List~PqrsResponse~
+            +findByReference(String) PqrsResponse
+            +assignResponsible(String, AssignResponsibleRequest) PqrsResponse
+            +passToManagement(String) PqrsResponse
+            +recordAnswer(String, AnswerRequest) PqrsResponse
+            +closeCase(String) PqrsResponse
+            +getExpiredAlerts() List~AlertResponse~
+        }
+
+        class ResponsibleController {
+            -PqrsService service
+            +findAll() List~ResponsibleResponse~
+            +createOrUpdate(ResponsibleRequest) ResponsibleResponse
+        }
+
+        class UserController {
+            -UserService service
+            +findAll() List~UserResponse~
+            +create(CreateUserRequest) UserResponse
+        }
+
+        class ApiExceptionHandler {
+            +handleNotFound(PqrsNotFoundException) ProblemDetail
+            +handleResponsibleNotFound(ResponsibleNotFoundException) ProblemDetail
+            +handleBusinessRule(BusinessRuleException) ProblemDetail
+            +handleValidation(MethodArgumentNotValidException) ProblemDetail
+        }
+    }
+
+    namespace application {
+        class PqrsService {
+            -PqrsRepository pqrsRepository
+            -CitizenRepository citizenRepository
+            -ResponsibleRepository responsibleRepository
+            +create(CreatePqrsRequest) PqrsResponse
+            +findByReference(String) PqrsResponse
+            +findAll() List~PqrsResponse~
+            +assignResponsible(String, AssignResponsibleRequest) PqrsResponse
+            +passToManagement(String) PqrsResponse
+            +recordAnswer(String, AnswerRequest) PqrsResponse
+            +closeCase(String) PqrsResponse
+            +getExpiredAlerts() List~AlertResponse~
+            +createOrUpdateResponsible(ResponsibleRequest) ResponsibleResponse
+            +findAllResponsibles() List~ResponsibleResponse~
+        }
+
+        class UserService {
+            -UserRepository repository
+            -BCryptPasswordEncoder passwordEncoder
+            +create(CreateUserRequest) UserResponse
+            +findAll() List~UserResponse~
+        }
+    }
+
+    namespace persistence_repository {
+        class PqrsRepository {
+            <<interface>>
+            +findByReferenceIgnoreCase(String) Optional~PqrsEntity~
+            +findAllByStateNotAndLimitedDateBefore(PqrsState, LocalDate) List~PqrsEntity~
+            +existsByReference(String) boolean
+        }
+
+        class CitizenRepository {
+            <<interface>>
+            +findByDocument(String) Optional~CitizenEntity~
+        }
+
+        class ResponsibleRepository {
+            <<interface>>
+            +findByDocument(String) Optional~ResponsibleEntity~
+        }
+
+        class UserRepository {
+            <<interface>>
+            +findByUsername(String) Optional~UserEntity~
+            +findByEmail(String) Optional~UserEntity~
+            +existsByUsername(String) boolean
+            +existsByEmail(String) boolean
+            +findAllByOrderByUsernameAsc() List~UserEntity~
+        }
+    }
+
+    namespace persistence_entity {
+        class PqrsEntity {
+            -Long id
+            -String reference
+            -PqrsType type
+            -String description
+            -PqrsState state
+            -LocalDate createdDate
+            -LocalDate limitedDate
+            -CitizenEntity citizen
+            -ResponsibleEntity responsible
+            -AnswerEntity answer
+            +assignResponsible(ResponsibleEntity) void
+            +passToManagement() void
+            +recordAnswer(AnswerEntity) void
+            +closeCase() void
+            +setReference(String) void
+        }
+
+        class CitizenEntity {
+            -Long id
+            -String document
+            -String name
+            -String email
+            -String phone
+            +updateFrom(String, String, String) void
+        }
+
+        class ResponsibleEntity {
+            -Long id
+            -String document
+            -String name
+            -String email
+            -String area
+            -ResponsibleRole role
+            +updateFrom(String, String, String, ResponsibleRole) void
+        }
+
+        class AnswerEntity {
+            -Long id
+            -String content
+            -LocalDate answerDate
+            -ResponsibleEntity author
+        }
+
+        class UserEntity {
+            -Long id
+            -String username
+            -String email
+            -String passwordHash
+            -UserRole role
+            -boolean active
+            -LocalDateTime createdAt
+            -LocalDateTime updatedAt
+        }
+    }
+
+    namespace domain {
+        class PqrsType {
+            <<enumeration>>
+            PETICION
+            QUEJA
+            RECLAMO
+            SUGERENCIA
+            +maximumAnswerDays() int
+        }
+
+        class PqrsState {
+            <<enumeration>>
+            RADICADA
+            ASIGNADA
+            EN_GESTION
+            RESPONDIDA
+            CERRADA
+        }
+
+        class ResponsibleRole {
+            <<enumeration>>
+            ANALISTA
+            SUPERVISOR
+        }
+
+        class UserRole {
+            <<enumeration>>
+            ADMIN
+            RESPONSABLE
+            CIUDADANO
+        }
+
+        class BusinessRuleException {
+            <<exception>>
+        }
+
+        class PqrsNotFoundException {
+            <<exception>>
+        }
+
+        class ResponsibleNotFoundException {
+            <<exception>>
+        }
+    }
+
+    namespace configuration {
+        class PqrsApplication {
+            +main(String[]) void
+        }
+
+        class DataInitializer {
+            +seedData(...) CommandLineRunner
+        }
+
+        class DatabaseConnectionChecker {
+            -JdbcTemplate jdbcTemplate
+            +run(ApplicationArguments) void
+        }
+
+        class JdbcTemplate {
+            <<Spring JDBC>>
+        }
+
+        class ExpiredPqrsMonitor {
+            -PqrsService service
+            +logExpiredCases() void
+        }
+    }
+
+    namespace dto {
+        class CreatePqrsRequest {
+            <<record>>
+            +PqrsType type
+            +String description
+            +CitizenRequest citizen
+        }
+
+        class CitizenRequest {
+            <<record>>
+            +String document
+            +String name
+            +String email
+            +String phone
+        }
+
+        class AssignResponsibleRequest {
+            <<record>>
+            +String responsibleDocument
+        }
+
+        class AnswerRequest {
+            <<record>>
+            +String content
+            +String authorDocument
+        }
+
+        class ResponsibleRequest {
+            <<record>>
+            +String document
+            +String name
+            +String email
+            +String area
+            +ResponsibleRole role
+        }
+
+        class CreateUserRequest {
+            <<record>>
+            +String username
+            +String email
+            +String password
+            +UserRole role
+        }
+    }
+
+    PqrsController --> PqrsService
+    ResponsibleController --> PqrsService
+    UserController --> UserService
+
+    PqrsController ..> CreatePqrsRequest
+    PqrsController ..> AssignResponsibleRequest
+    PqrsController ..> AnswerRequest
+    ResponsibleController ..> ResponsibleRequest
+    UserController ..> CreateUserRequest
+
+    CreatePqrsRequest --> CitizenRequest
+
+    PqrsService --> PqrsRepository
+    PqrsService --> CitizenRepository
+    PqrsService --> ResponsibleRepository
+    UserService --> UserRepository
+
+    PqrsRepository ..> PqrsEntity
+    CitizenRepository ..> CitizenEntity
+    ResponsibleRepository ..> ResponsibleEntity
+    UserRepository ..> UserEntity
+
+    PqrsEntity --> CitizenEntity
+    PqrsEntity --> ResponsibleEntity
+    PqrsEntity --> AnswerEntity
+    AnswerEntity --> ResponsibleEntity
+
+    PqrsEntity --> PqrsType
+    PqrsEntity --> PqrsState
+    ResponsibleEntity --> ResponsibleRole
+    UserEntity --> UserRole
+
+    PqrsEntity ..> BusinessRuleException
+    PqrsService ..> PqrsNotFoundException
+    PqrsService ..> ResponsibleNotFoundException
+
+    ApiExceptionHandler ..> BusinessRuleException
+    ApiExceptionHandler ..> PqrsNotFoundException
+    ApiExceptionHandler ..> ResponsibleNotFoundException
+
+    DataInitializer --> ResponsibleRepository
+    DataInitializer --> UserRepository
+    DataInitializer ..> ResponsibleEntity
+    DataInitializer ..> UserEntity
+
+    ExpiredPqrsMonitor --> PqrsService
+    DatabaseConnectionChecker --> JdbcTemplate
+    PqrsApplication --> DataInitializer
+
+Cómo leer el diagrama
+
+El flujo principal comienza en los Controllers, que reciben las solicitudes HTTP y delegan el trabajo a los Services.
+
+Los Services coordinan los casos de uso y utilizan los Repositories para consultar o guardar las entidades mediante JPA.
+
+Las Entities representan la información persistente y sus relaciones con las tablas de la base de datos.
+
+Los Enums pertenecen al dominio porque representan conceptos del negocio: tipos de PQRS, estados, roles de responsables y roles de usuarios.
+
+Las clases de configuración apoyan el funcionamiento de la aplicación: inicialización de datos, comprobación de conexión a la base de datos y monitoreo de PQRS vencidas.
+
+Los DTOs pertenecen a la capa REST y representan los datos que entran o salen de la API, evitando exponer directamente las entidades JPA.
+
+La relación central puede resumirse así:
+
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Entity
+    ↓
+MySQL
+
+Mientras que las reglas de negocio se concentran principalmente en PqrsEntity y los conceptos del dominio:
+
+PqrsEntity
+    ├── PqrsType
+    ├── PqrsState
+    ├── CitizenEntity
+    ├── ResponsibleEntity
+    └── AnswerEntity
