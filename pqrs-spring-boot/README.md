@@ -73,21 +73,13 @@ flowchart LR
 ### ¿Por qué cada cosa está donde está?
 
 | Carpeta | Responsabilidad | Qué NO debería hacer |
-
 |---|---|---|
-
 | `api/rest` | HTTP, JSON, validación y DTOs | Consultar MySQL directamente |
-
 | `application` | Coordinar casos de uso y publicar eventos | Contener detalles de SMTP o JDBC |
-
 | `domain` | Estados, tipos y reglas de negocio | Saber que existe MySQL, Gmail o Spring MVC |
-
 | `infrastructure/persistence` | Entidades JPA y repositorios | Definir la lógica de los casos de uso |
-
 | `infrastructure/email` | Integración real con Gmail/SMTP | Decidir reglas de negocio |
-
 | `infrastructure/config` | Seed y monitor programado | Resolver lógica HTTP |
-
 | `resources/db/migration` | Evolución versionada del esquema | Contener lógica Java |
 
 La idea es que cada capa tenga una razón concreta para existir. Esto reduce el acoplamiento y facilita cambiar una tecnología sin tener que modificar todo el proyecto.
@@ -243,15 +235,10 @@ Reglas principales:
 Los plazos viven en `PqrsType`:
 
 | Tipo | Máximo de respuesta |
-
 |---|---:|
-
 | `PETICION` | 15 días |
-
 | `QUEJA` | 5 días |
-
 | `RECLAMO` | 5 días |
-
 | `SUGERENCIA` | 10 días |
 
 ---
@@ -671,11 +658,8 @@ SEED_DATA_ENABLED=true
 Responsables de demostración:
 
 | Documento | Nombre | Rol | Área |
-
 |---|---|---|---|
-
 | `987654321` | Ana Gomez | `ANALISTA` | Soporte Tecnico |
-
 | `112233445` | Roberto Silva | `SUPERVISOR` | Soporte Tecnico |
 
 Para Clever Cloud se recomienda dejar:
@@ -718,7 +702,7 @@ Content-Type: application/json
 
     "phone": "3001234567"
 
-  }
+    }
 
 }
 
@@ -1001,11 +985,8 @@ No se mantiene una herencia `Complaint / Claim / Request / Suggestion`. La difer
 PqrsType
 
 ├── PETICION    -> 15 días
-
 ├── QUEJA       -> 5 días
-
 ├── RECLAMO     -> 5 días
-
 └── SUGERENCIA  -> 10 días
 
 ```
@@ -1084,7 +1065,7 @@ Domain rules + Repository
 
 Database
 
-        +---- Application Event ----> Email Adapter -> Gmail
+     +---- Application Event ----> Email Adapter -> Gmail
 
 ```
 
@@ -1118,31 +1099,32 @@ Con esta separación el proyecto es más fácil de estudiar hoy y más fácil de
 
 El siguiente diagrama representa la estructura principal de clases de la versión actual del proyecto y muestra cómo se relacionan las capas de API REST, aplicación, persistencia, dominio y configuración.
 
+```mermaid
 classDiagram
-    direction LR
+direction TB
 
     namespace api_rest {
         class PqrsController {
             -PqrsService service
             +create(CreatePqrsRequest) PqrsResponse
-            +findAll() List~PqrsResponse~
+            +findAll() List
             +findByReference(String) PqrsResponse
             +assignResponsible(String, AssignResponsibleRequest) PqrsResponse
             +passToManagement(String) PqrsResponse
             +recordAnswer(String, AnswerRequest) PqrsResponse
             +closeCase(String) PqrsResponse
-            +getExpiredAlerts() List~AlertResponse~
+            +getExpiredAlerts() List
         }
 
         class ResponsibleController {
             -PqrsService service
-            +findAll() List~ResponsibleResponse~
+            +findAll() List
             +createOrUpdate(ResponsibleRequest) ResponsibleResponse
         }
 
         class UserController {
             -UserService service
-            +findAll() List~UserResponse~
+            +findAll() List
             +create(CreateUserRequest) UserResponse
         }
 
@@ -1161,49 +1143,49 @@ classDiagram
             -ResponsibleRepository responsibleRepository
             +create(CreatePqrsRequest) PqrsResponse
             +findByReference(String) PqrsResponse
-            +findAll() List~PqrsResponse~
+            +findAll() List
             +assignResponsible(String, AssignResponsibleRequest) PqrsResponse
             +passToManagement(String) PqrsResponse
             +recordAnswer(String, AnswerRequest) PqrsResponse
             +closeCase(String) PqrsResponse
-            +getExpiredAlerts() List~AlertResponse~
+            +getExpiredAlerts() List
             +createOrUpdateResponsible(ResponsibleRequest) ResponsibleResponse
-            +findAllResponsibles() List~ResponsibleResponse~
+            +findAllResponsibles() List
         }
 
         class UserService {
             -UserRepository repository
             -BCryptPasswordEncoder passwordEncoder
             +create(CreateUserRequest) UserResponse
-            +findAll() List~UserResponse~
+            +findAll() List
         }
     }
 
     namespace persistence_repository {
         class PqrsRepository {
             <<interface>>
-            +findByReferenceIgnoreCase(String) Optional~PqrsEntity~
-            +findAllByStateNotAndLimitedDateBefore(PqrsState, LocalDate) List~PqrsEntity~
+            +findByReferenceIgnoreCase(String) Optional
+            +findAllByStateNotAndLimitedDateBefore(PqrsState, LocalDate) List
             +existsByReference(String) boolean
         }
 
         class CitizenRepository {
             <<interface>>
-            +findByDocument(String) Optional~CitizenEntity~
+            +findByDocument(String) Optional
         }
 
         class ResponsibleRepository {
             <<interface>>
-            +findByDocument(String) Optional~ResponsibleEntity~
+            +findByDocument(String) Optional
         }
 
         class UserRepository {
             <<interface>>
-            +findByUsername(String) Optional~UserEntity~
-            +findByEmail(String) Optional~UserEntity~
+            +findByUsername(String) Optional
+            +findByEmail(String) Optional
             +existsByUsername(String) boolean
             +existsByEmail(String) boolean
-            +findAllByOrderByUsernameAsc() List~UserEntity~
+            +findAllByOrderByUsernameAsc() List
         }
     }
 
@@ -1378,55 +1360,56 @@ classDiagram
         }
     }
 
-    PqrsController --> PqrsService
-    ResponsibleController --> PqrsService
-    UserController --> UserService
+    %% Inyección de dependencias (Asociación directa)
+    PqrsController --> PqrsService : uses
+    ResponsibleController --> PqrsService : uses
+    UserController --> UserService : uses
+    PqrsService --> PqrsRepository : uses
+    PqrsService --> CitizenRepository : uses
+    PqrsService --> ResponsibleRepository : uses
+    UserService --> UserRepository : uses
+    ExpiredPqrsMonitor --> PqrsService : uses
+    DatabaseConnectionChecker --> JdbcTemplate : uses
+    PqrsApplication --> DataInitializer : initializes
+    DataInitializer --> ResponsibleRepository : uses
+    DataInitializer --> UserRepository : uses
 
+    %% Dependencias de DTOs y Request Bodies (Uso puntual / Dependencia)
     PqrsController ..> CreatePqrsRequest
     PqrsController ..> AssignResponsibleRequest
     PqrsController ..> AnswerRequest
     ResponsibleController ..> ResponsibleRequest
     UserController ..> CreateUserRequest
+    CreatePqrsRequest ..> CitizenRequest
 
-    CreatePqrsRequest --> CitizenRequest
+    %% Relaciones de Entidades con Repositorios
+    PqrsRepository ..> PqrsEntity : returns
+    CitizenRepository ..> CitizenEntity : returns
+    ResponsibleRepository ..> ResponsibleEntity : returns
+    UserRepository ..> UserEntity : returns
+    DataInitializer ..> ResponsibleEntity : creates
+    DataInitializer ..> UserEntity : creates
 
-    PqrsService --> PqrsRepository
-    PqrsService --> CitizenRepository
-    PqrsService --> ResponsibleRepository
-    UserService --> UserRepository
+    %% Composición / Relaciones internas entre Entidades
+    PqrsEntity *-- CitizenEntity : citizen
+    PqrsEntity *-- ResponsibleEntity : responsible
+    PqrsEntity *-- AnswerEntity : answer
+    AnswerEntity --> ResponsibleEntity : author
 
-    PqrsRepository ..> PqrsEntity
-    CitizenRepository ..> CitizenEntity
-    ResponsibleRepository ..> ResponsibleEntity
-    UserRepository ..> UserEntity
-
-    PqrsEntity --> CitizenEntity
-    PqrsEntity --> ResponsibleEntity
-    PqrsEntity --> AnswerEntity
-    AnswerEntity --> ResponsibleEntity
-
+    %% Enums y Tipos de datos en Entidades
     PqrsEntity --> PqrsType
     PqrsEntity --> PqrsState
     ResponsibleEntity --> ResponsibleRole
     UserEntity --> UserRole
 
+    %% Excepciones y Manejo Global
     PqrsEntity ..> BusinessRuleException
     PqrsService ..> PqrsNotFoundException
     PqrsService ..> ResponsibleNotFoundException
-
     ApiExceptionHandler ..> BusinessRuleException
     ApiExceptionHandler ..> PqrsNotFoundException
     ApiExceptionHandler ..> ResponsibleNotFoundException
-
-    DataInitializer --> ResponsibleRepository
-    DataInitializer --> UserRepository
-    DataInitializer ..> ResponsibleEntity
-    DataInitializer ..> UserEntity
-
-    ExpiredPqrsMonitor --> PqrsService
-    DatabaseConnectionChecker --> JdbcTemplate
-    PqrsApplication --> DataInitializer
-
+```
 Cómo leer el diagrama
 
 El flujo principal comienza en los Controllers, que reciben las solicitudes HTTP y delegan el trabajo a los Services.
@@ -1455,7 +1438,8 @@ MySQL
 
 Mientras que las reglas de negocio se concentran principalmente en PqrsEntity y los conceptos del dominio:
 
-PqrsEntity
+    PqrsEntity
+
     ├── PqrsType
     ├── PqrsState
     ├── CitizenEntity
