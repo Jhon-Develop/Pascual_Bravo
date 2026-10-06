@@ -1,0 +1,43 @@
+services:
+  pqrs-mysql:
+    image: mysql:8.4
+    container_name: pqrs-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: pqrs
+      MYSQL_USER: pqrs_app
+      MYSQL_PASSWORD: pqrs_app
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - pqrs-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  pqrs-microservice:
+    build: .
+    container_name: pqrs-microservice
+    depends_on:
+      pqrs-mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_HOST: pqrs-mysql
+      DB_PORT: 3306
+      DB_NAME: pqrs
+      DB_USERNAME: pqrs_app
+      DB_PASSWORD: pqrs_app
+      DB_USE_SSL: false
+      DB_REQUIRE_SSL: false
+      R2DBC_URL_PREFIX: r2dbc
+      SEED_DATA_ENABLED: true
+      MAIL_ENABLED: false
+    ports:
+      - "8080:8080"
+
+volumes:
+  pqrs-mysql-data:

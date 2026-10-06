@@ -1,7 +1,6 @@
 package com.pqrs.microservice.infrastructure.persistence.repository;
 
 import com.pqrs.microservice.domain.enums.PqrsState;
-import com.pqrs.microservice.domain.enums.PqrsType;
 import com.pqrs.microservice.infrastructure.persistence.entity.PqrsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

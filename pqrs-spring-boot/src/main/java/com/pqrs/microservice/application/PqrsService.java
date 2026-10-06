@@ -4,7 +4,6 @@ import com.pqrs.microservice.api.rest.dto.AlertResponse;
 import com.pqrs.microservice.api.rest.dto.AnswerRequest;
 import com.pqrs.microservice.api.rest.dto.AnswerResponse;
 import com.pqrs.microservice.api.rest.dto.AssignResponsibleRequest;
-import com.pqrs.microservice.api.rest.dto.CitizenRequest;
 import com.pqrs.microservice.api.rest.dto.CitizenResponse;
 import com.pqrs.microservice.api.rest.dto.CreatePqrsRequest;
 import com.pqrs.microservice.api.rest.dto.PqrsResponse;

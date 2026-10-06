@@ -1,0 +1,67 @@
+### Health
+GET http://localhost:8080/actuator/health
+
+### Migraciones Flyway
+GET http://localhost:8080/actuator/flyway
+
+### Crear PQRS (debe generar correo si MAIL_ENABLED=true y el ciudadano tiene email)
+POST http://localhost:8080/api/v1/pqrs
+Content-Type: application/json
+
+{
+  "type": "QUEJA",
+  "description": "El servicio presentó intermitencias durante el fin de semana.",
+  "citizen": {
+    "document": "101823948",
+    "name": "Carlos Mendoza",
+    "email": "carlos@gmail.com",
+    "phone": "3001234567"
+  }
+}
+
+### Todas las PQRS
+GET http://localhost:8080/api/v1/pqrs
+
+### Consultar una PQRS
+GET http://localhost:8080/api/v1/pqrs/RAD-2026-0001
+
+### Responsables demo
+GET http://localhost:8080/api/v1/responsibles
+
+### Crear o actualizar responsable
+POST http://localhost:8080/api/v1/responsibles
+Content-Type: application/json
+
+{
+  "document": "123456789",
+  "name": "Laura Perez",
+  "email": "laura.perez@empresa.com",
+  "area": "Atencion al Cliente",
+  "role": "ANALISTA"
+}
+
+### Asignar responsable
+POST http://localhost:8080/api/v1/pqrs/RAD-2026-0001/assignment
+Content-Type: application/json
+
+{
+  "responsibleDocument": "987654321"
+}
+
+### Pasar a gestión
+POST http://localhost:8080/api/v1/pqrs/RAD-2026-0001/management
+
+### Registrar respuesta (debe notificar al ciudadano si tiene email)
+POST http://localhost:8080/api/v1/pqrs/RAD-2026-0001/answer
+Content-Type: application/json
+
+{
+  "content": "Se realizó mantenimiento preventivo y el servicio fue restablecido.",
+  "authorDocument": "987654321"
+}
+
+### Cerrar
+POST http://localhost:8080/api/v1/pqrs/RAD-2026-0001/close
+
+### Alertas
+GET http://localhost:8080/api/v1/pqrs/alerts/expired
