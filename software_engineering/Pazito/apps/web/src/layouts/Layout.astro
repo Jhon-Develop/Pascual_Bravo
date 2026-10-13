@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL || '/api/v1';
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Pazito - Cuentas claras, amistades tranquilas</title>
+    <meta name="description" content="Registra y divide gastos compartidos entre amigos, familia y compañeros. Sin conflictos, sin confusiones." />
+    <meta name="theme-color" content="#14b8a6" />
+    <meta name="api-base-url" content={apiBaseUrl} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/icon-512.svg" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    <slot />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          // A service worker must never control Astro's dev server: its cache-first
+          // strategy can keep stale CSS/JS and make the page look unstyled.
+          if (import.meta.env.DEV) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(
+              registrations
+                .filter((registration) => {
+                  const scope = new URL(registration.scope);
+                  return scope.origin === location.origin && scope.pathname === '/';
+                })
+                .map((registration) => registration.unregister())
+            );
+
+            if ('caches' in window) {
+              const cacheNames = await caches.keys();
+              await Promise.all(
+                cacheNames
+                  .filter((name) => name.startsWith('pazito-'))
+                  .map((name) => caches.delete(name))
+              );
+            }
+            return;
+          }
+
+          navigator.serviceWorker.register('/sw.js').catch((error) => {
+            // Do not break app startup if PWA support is unavailable.
+            console.warn('[Pazito] Service worker registration failed:', error);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

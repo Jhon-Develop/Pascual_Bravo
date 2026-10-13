@@ -3,6 +3,7 @@ pqrs-spring-boot-microservice.zip
 pqrs-spring-boot(1)
 pqrs-spring-boot.zip
 pqrs-spring-boot-webflux.zip
+pazito_monorepo.zip
 
 pqrs-spring-boot(1)
 
@@ -24,3 +25,18 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+
+node_modules/
+**/node_modules/
+**/dist/
+**/.astro/
+**/coverage/
+.env
+.env.*
+!.env.example
+apps/api/.data/
+apps/api/var/
+apps/api/uploads/
+*.log
+.DS_Store
+Thumbs.db

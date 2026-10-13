@@ -1,0 +1,316 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout>
+  <main id="main-content">
+    <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <a href="/" class="inline-flex items-center gap-2 mb-6" aria-label="Pazito - Inicio">
+            <svg class="w-10 h-10 text-brand-600" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="currentColor" />
+              <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="text-xl font-bold text-text-primary">Pazito</span>
+          </a>
+          <h1 class="text-2xl font-bold text-text-primary">Crear cuenta</h1>
+          <p class="mt-2 text-text-secondary">Regístrate gratis y empieza a organizar tus cuentas compartidas</p>
+        </div>
+
+        <form id="register-form" class="card p-6 sm:p-8 space-y-6" novalidate>
+          <div id="form-errors" class="hidden" role="alert"></div>
+
+          <div class="space-y-2">
+            <label for="name" class="label">Nombre <span class="text-status-error" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              autocomplete="name"
+              class="input"
+              placeholder="Tu nombre"
+              required
+              autofocus
+            />
+            <p id="name-error" class="error-text hidden"></p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="email" class="label">Correo electrónico <span class="text-status-error" aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              class="input"
+              placeholder="tu@correo.com"
+              required
+            />
+            <p id="email-error" class="error-text hidden"></p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="password" class="label">Contraseña <span class="text-status-error" aria-hidden="true">*</span></label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                class="input pr-12"
+                placeholder="Mínimo 12 caracteres"
+                required
+                minlength="8"
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                aria-label="Mostrar contraseña"
+                aria-hidden="true"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+            <p id="password-error" class="error-text hidden"></p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="confirmPassword" class="label">Confirmar contraseña <span class="text-status-error" aria-hidden="true">*</span></label>
+            <div class="relative">
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                autocomplete="new-password"
+                class="input pr-12"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                id="toggle-confirm-password"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                aria-label="Mostrar contraseña"
+                aria-hidden="true"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+            <p id="confirm-password-error" class="error-text hidden"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full mt-2">
+            <span class="btn-text">Crear cuenta</span>
+            <span class="btn-loading hidden">
+              <svg class="spinner spinner-sm" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="31.4 31.4" />
+              </svg>
+            </span>
+          </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-text-secondary">
+          ¿Ya tienes cuenta? <a href="/app/#/auth/login" class="text-brand-600 hover:underline font-medium">Inicia sesión</a>
+        </p>
+
+        <div class="mt-8 text-center text-xs text-text-tertiary">
+          <p>Al continuar, aceptas nuestros <a href="#" class="underline hover:text-brand-600">Términos</a> y <a href="#" class="underline hover:text-brand-600">Privacidad</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const apiBaseUrl = (document.querySelector('meta[name="api-base-url"]')?.getAttribute('content') || '/api/v1').replace(/\/+$/, '');
+        const form = document.getElementById('register-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const togglePassword = document.getElementById('toggle-password');
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const formErrors = document.getElementById('form-errors');
+        const nameError = document.getElementById('name-error');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+        const confirmPasswordError = document.getElementById('confirm-password-error');
+
+        let showPassword = false;
+        let showConfirmPassword = false;
+
+        function validateEmail(email) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(input, errorElement, message) {
+          input.classList.add('input-error');
+          errorElement.textContent = message;
+          errorElement.classList.remove('hidden');
+        }
+
+        function clearError(input, errorElement) {
+          input.classList.remove('input-error');
+          errorElement.classList.add('hidden');
+        }
+
+        function clearAllErrors() {
+          [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach((input, i) => {
+            const errors = [nameError, emailError, passwordError, confirmPasswordError];
+            clearError(input, errors[i]);
+          });
+          formErrors.classList.add('hidden');
+          formErrors.textContent = '';
+        }
+
+        function showFormError(message) {
+          formErrors.textContent = message;
+          formErrors.classList.remove('hidden');
+        }
+
+        // Toggle password visibility
+        function setupToggle(toggleBtn, targetInput, initialLabel) {
+          let show = false;
+          toggleBtn.addEventListener('click', () => {
+            show = !show;
+            targetInput.type = show ? 'text' : 'password';
+            toggleBtn.innerHTML = show
+              ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.955 9.955 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>`
+              : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
+            toggleBtn.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+          });
+        }
+
+        setupToggle(togglePassword, passwordInput, 'Mostrar contraseña');
+        setupToggle(toggleConfirmPassword, confirmPasswordInput, 'Mostrar contraseña');
+
+        // Real-time validation
+        nameInput.addEventListener('blur', () => {
+          if (nameInput.value.trim().length < 2) {
+            showError(nameInput, nameError, 'Mínimo 2 caracteres');
+          } else {
+            clearError(nameInput, nameError);
+          }
+        });
+
+        nameInput.addEventListener('input', () => {
+          if (nameInput.classList.contains('input-error') && nameInput.value.trim().length >= 2) {
+            clearError(nameInput, nameError);
+          }
+        });
+
+        emailInput.addEventListener('blur', () => {
+          if (emailInput.value && !validateEmail(emailInput.value)) {
+            showError(emailInput, emailError, 'Formato de correo inválido');
+          } else {
+            clearError(emailInput, emailError);
+          }
+        });
+
+        emailInput.addEventListener('input', () => {
+          if (emailInput.classList.contains('input-error') && validateEmail(emailInput.value)) {
+            clearError(emailInput, emailError);
+          }
+        });
+
+        passwordInput.addEventListener('input', () => {
+          if (passwordInput.classList.contains('input-error') && passwordInput.value.length >= 8) {
+            clearError(passwordInput, passwordError);
+          }
+          // Also validate confirm password
+          if (confirmPasswordInput.value && confirmPasswordInput.value !== passwordInput.value) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Las contraseñas no coinciden');
+          } else if (confirmPasswordInput.value && confirmPasswordInput.value === passwordInput.value) {
+            clearError(confirmPasswordInput, confirmPasswordError);
+          }
+        });
+
+        confirmPasswordInput.addEventListener('input', () => {
+          if (confirmPasswordInput.classList.contains('input-error') && confirmPasswordInput.value === passwordInput.value) {
+            clearError(confirmPasswordInput, confirmPasswordError);
+          }
+        });
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          clearAllErrors();
+
+          const name = nameInput.value.trim();
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          let hasError = false;
+
+          if (!name || name.length < 2) {
+            showError(nameInput, nameError, 'Mínimo 2 caracteres');
+            hasError = true;
+          }
+
+          if (!email) {
+            showError(emailInput, emailError, 'El correo es obligatorio');
+            hasError = true;
+          } else if (!validateEmail(email)) {
+            showError(emailInput, emailError, 'Formato de correo inválido');
+            hasError = true;
+          }
+
+          if (!password) {
+            showError(passwordInput, passwordError, 'La contraseña es obligatoria');
+            hasError = true;
+          } else if (password.length < 12) {
+            showError(passwordInput, passwordError, 'Mínimo 12 caracteres');
+            hasError = true;
+          }
+
+          if (!confirmPassword) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Confirma tu contraseña');
+            hasError = true;
+          } else if (confirmPassword !== password) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Las contraseñas no coinciden');
+            hasError = true;
+          }
+
+          if (hasError) return;
+
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const btnText = submitBtn.querySelector('.btn-text');
+          const btnLoading = submitBtn.querySelector('.btn-loading');
+          submitBtn.disabled = true;
+          btnText.classList.add('hidden');
+          btnLoading.classList.remove('hidden');
+
+          try {
+            const response = await fetch(`${apiBaseUrl}/auth/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
+              body: JSON.stringify({ name, email, password }),
+              credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || 'Error al crear la cuenta');
+            }
+
+            window.location.href = '/app/#/dashboard';
+          } catch (error) {
+            showFormError(error.message);
+          } finally {
+            submitBtn.disabled = false;
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+          }
+        });
+      });
+    </script>
+  </main>
+</Layout>

@@ -1,0 +1,51 @@
+{
+  "name": "@pazito/web",
+  "type": "module",
+  "version": "0.2.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "predev": "bun run --cwd ../../packages/contracts build",
+    "prebuild": "bun run --cwd ../../packages/contracts build",
+    "pretypecheck": "bun run --cwd ../../packages/contracts build",
+    "pretest": "bun run --cwd ../../packages/contracts build"
+  },
+  "dependencies": {
+    "astro": "^7.3.8",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "idb": "^8.0.4",
+    "lucide-react": "^1.55.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.6",
+    "@pazito/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/react": "^7.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "jsdom": "^30.1.2",
+    "tailwindcss": "^4.3.3",
+    "typescript": "6",
+    "vitest": "^5.0.3",
+    "@vitejs/plugin-react": "^6.1.2"
+  }
+}

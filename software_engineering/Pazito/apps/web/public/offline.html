@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sin conexión - Pazito</title>
+    <meta name="theme-color" content="#14b8a6" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: #fafafa;
+        color: #171717;
+      }
+      .container {
+        text-align: center;
+        max-width: 320px;
+      }
+      .icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: #f0fdfa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+      p { color: #525252; margin-bottom: 1.5rem; line-height: 1.5; }
+      button {
+        background: #14b8a6;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      button:hover { background: #0d9488; }
+      .features {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e5e5e5;
+        text-align: left;
+        font-size: 0.875rem;
+        color: #737373;
+      }
+      .features ul { list-style: none; }
+      .features li { padding: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; }
+      .features li::before { content: "✓"; color: #14b8a6; font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon" aria-hidden="true">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 1l22 22"></path>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <path d="M12 20h.01"></path>
+        </svg>
+      </div>
+      <h1>Sin conexión a internet</h1>
+      <p>Parece que estás offline. Algunas funciones pueden no estar disponibles hasta que recuperes la conexión.</p>
+      <button onclick="window.location.reload()">Reintentar</button>
+
+      <div class="features">
+        <p><strong>Lo que sigue funcionando:</strong></p>
+        <ul>
+          <li>Ver gastos ya cargados</li>
+          <li>Consultar balances calculados</li>
+          <li>Crear gastos nuevos (se sincronizarán al volver online)</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // The app shell registers the service worker in production.
+      window.addEventListener('online', () => window.location.reload());
+    </script>
+  </body>
+</html>

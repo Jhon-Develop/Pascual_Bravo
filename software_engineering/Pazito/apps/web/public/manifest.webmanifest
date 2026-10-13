@@ -1,0 +1,39 @@
+{
+  "name": "Pazito - Cuentas compartidas",
+  "short_name": "Pazito",
+  "description": "Registra y divide gastos compartidos entre amigos, familia y compañeros. Sin conflictos, sin confusiones.",
+  "start_url": "/app/",
+  "display": "standalone",
+  "background_color": "#fefefe",
+  "theme_color": "#14b8a6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es-CO",
+  "icons": [
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity", "lifestyle"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Nuevo gasto",
+      "short_name": "Gasto",
+      "description": "Registrar un gasto rápido",
+      "url": "/app/#/groups/new",
+      "icons": [{ "src": "/icons/icon-512.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Mis grupos",
+      "short_name": "Grupos",
+      "description": "Ver mis grupos de gastos",
+      "url": "/app/#/groups",
+      "icons": [{ "src": "/icons/icon-512.svg", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

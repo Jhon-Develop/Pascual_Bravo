@@ -1,0 +1,70 @@
+---
+const features = [
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>`,
+    title: 'Registro de gastos sencillo',
+    description: 'El MVP busca registrar título, importe, pagador y participantes con pocos pasos. El formulario de gastos está en desarrollo.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,
+    title: 'Grupos para cada plan',
+    description: 'El alcance incluye grupos de vivienda, viajes, eventos y familia, con invitaciones por enlace/QR y permisos configurables. El flujo aún está pendiente.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`,
+    title: 'Repartos explicables',
+    description: 'Estamos definiendo reparto equitativo, cantidades fijas y porcentajes con redondeo consistente y comprobable.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>`,
+    title: 'Historial transparente',
+    description: 'El objetivo es conservar quién pagó, quién participó y cómo se calculó cada gasto, con filtros y exportación de datos.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>`,
+    title: 'Balances entendibles',
+    description: 'El producto mostrará quién debe a quién y por qué. Los balances oficiales requieren el backend y sus reglas monetarias.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`,
+    title: 'PWA y trabajo offline',
+    description: 'La base PWA y una cola local están preparadas; la experiencia offline completa, la resolución de conflictos y la sincronización están en desarrollo.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
+    title: 'Invitaciones sencillas',
+    description: 'El MVP incluirá enlaces y códigos QR con vencimiento y revocación; todavía no están disponibles en el prototipo.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>`,
+    title: 'Sincronización con garantías',
+    description: 'Estamos trabajando en una cola offline idempotente. No afirmaremos que evita duplicados hasta probar el flujo completo con el backend.',
+  },
+];
+---
+
+<section class="py-16 sm:py-24 bg-surface-50" aria-labelledby="features-heading">
+  <div class="container">
+    <header class="text-center max-w-2xl mx-auto mb-16">
+      <h2 id="features-heading" class="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
+        Todo lo que necesitas para <span class="text-brand-600">organizar cuentas compartidas</span>
+      </h2>
+      <p class="text-lg text-text-secondary">
+        Diseñado para reducir conflictos y confusión al compartir dinero.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {features.map((feature, index) => (
+        <article
+          class="group card p-6 hover:shadow-md transition-all duration-300 animate-in slide-in-from-bottom"
+          style={`animation-delay: ${index * 100}ms`}
+        >
+          <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center mb-4 group-hover:bg-brand-500 group-hover:text-white transition-colors" set:html={feature.icon} />
+          <h3 class="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
+          <p class="text-text-secondary text-sm leading-relaxed">{feature.description}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

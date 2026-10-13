@@ -1,0 +1,83 @@
+---
+const steps = [
+  {
+    number: '01',
+    icon: `<svg class="w-6 h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,
+    title: 'Crea tu grupo',
+    description: 'El objetivo es crear un grupo, elegir su moneda de liquidación e invitar por enlace o QR. Este flujo aún está pendiente.',
+  },
+  {
+    number: '02',
+    icon: `<svg class="w-6 h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>`,
+    title: 'Añade un gasto',
+    description: 'El formulario permitirá registrar importe, moneda original, pagador, participantes y un reparto equitativo, fijo o porcentual.',
+  },
+  {
+    number: '03',
+    icon: `<svg class="w-6 h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`,
+    title: 'Revisa los balances',
+    description: 'El backend deberá calcular y explicar los balances sin sumar monedas incompatibles y manteniendo tasas históricas.',
+  },
+  {
+    number: '04',
+    icon: `<svg class="w-6 h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    title: 'Liquida y confirma',
+    description: 'Cada pago será una declaración manual que la contraparte podrá confirmar o disputar; la interfaz aún está pendiente.',
+  },
+];
+---
+
+<section class="py-16 sm:py-24 bg-surface-50" aria-labelledby="how-it-works-heading">
+  <div class="container">
+    <header class="text-center max-w-2xl mx-auto mb-16">
+      <h2 id="how-it-works-heading" class="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
+        Cómo funciona en <span class="text-brand-600">4 pasos</span>
+      </h2>
+      <p class="text-lg text-text-secondary">
+        Este es el recorrido que estamos construyendo para el MVP.
+      </p>
+    </header>
+
+    <div class="relative max-w-5xl mx-auto">
+      <div class="hidden lg:block absolute left-1/2 top-10 bottom-10 w-0.5 bg-brand-200 -translate-x-1/2" aria-hidden="true" />
+
+      <div class="space-y-12 lg:space-y-16">
+        {steps.map((step, index) => (
+          <article class="relative flex flex-col lg:flex-row items-start gap-6 animate-in slide-in-from-bottom" style={`animation-delay: ${index * 150}ms`}>
+            <div class="relative z-10 flex-shrink-0 w-20 lg:w-24">
+              <div class="flex flex-col items-center">
+                <div class="relative w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-surface-50 border-2 border-brand-200 flex items-center justify-center group-hover:border-brand-500 transition-colors">
+                  <span class="text-2xl lg:text-3xl font-bold text-brand-600">{step.number}</span>
+                </div>
+                {index < steps.length - 1 && (
+                  <div class="hidden lg:block w-0.5 h-24 bg-brand-200 mt-2" aria-hidden="true" />
+                )}
+              </div>
+            </div>
+
+            <div class="flex-1 lg:w-1/2 lg:pr-8 lg:text-left order-2 lg:order-1">
+              <div class="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center mb-4 lg:mb-4" set:html={step.icon} />
+              <h3 class="text-xl lg:text-2xl font-semibold text-text-primary mb-2">{step.title}</h3>
+              <p class="text-text-secondary leading-relaxed lg:w-80 lg:text-left">{step.description}</p>
+            </div>
+
+            <div class="flex-1 lg:w-1/2 lg:pl-8 order-1 lg:order-2">
+              <div class="bg-surface-50 border border-border-primary rounded-xl p-6 min-h-[120px] lg:min-h-[140px]">
+                <div class="flex items-center gap-3 text-sm text-text-secondary mb-4">
+                  <span class="px-2 py-1 bg-brand-100 text-brand-700 rounded-full font-medium">
+                    Paso {index + 1}
+                  </span>
+                </div>
+                <div class="space-y-2 text-sm text-text-secondary">
+                  <p>✓ Interfaz limpia y guiada</p>
+                  <p>✓ Validación en tiempo real</p>
+                  <p>✓ Accesible por teclado y lector de pantalla</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

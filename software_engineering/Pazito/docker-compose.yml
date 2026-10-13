@@ -1,0 +1,25 @@
+# Local development only. Do not reuse these credentials for deployed environments.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: pazito-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: pazito
+      MYSQL_USER: pazito
+      MYSQL_PASSWORD: pazito_dev_only
+      MYSQL_ROOT_PASSWORD: root_dev_only_change_me
+      TZ: UTC
+    ports:
+      - '127.0.0.1:3306:3306'
+    volumes:
+      - pazito_mysql_data:/var/lib/mysql
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root -p"$$MYSQL_ROOT_PASSWORD" --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+volumes:
+  pazito_mysql_data:

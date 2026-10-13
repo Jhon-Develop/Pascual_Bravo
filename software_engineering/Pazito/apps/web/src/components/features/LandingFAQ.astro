@@ -1,0 +1,83 @@
+---
+const faqs = [
+  {
+    question: '¿Pazito mueve dinero real entre cuentas bancarias?',
+    answer: 'No. Pazito solo registra y concilia gastos compartidos. Calcula quién debe a quién, pero no ejecuta transferencias ni confirma pagos bancarios. Las liquidaciones son acuerdos entre vosotros.',
+  },
+  {
+    question: '¿Es gratis?',
+    answer: 'La decisión actual es construir una experiencia gratuita y sin publicidad. El modelo de ingresos futuro sigue sin definirse; no se debe interpretar esta versión de desarrollo como un servicio comercial ya lanzado.',
+  },
+  {
+    question: '¿Mis datos financieros son privados?',
+    answer: 'La privacidad es un requisito del proyecto, pero todavía falta el backend, revisar los controles de acceso y publicar la política de privacidad. Esta versión es un prototipo: no introduzcas datos personales ni gastos reales.',
+  },
+  {
+    question: '¿Puedo usarlo sin conexión a internet?',
+    answer: 'La PWA y una cola local de gastos están en desarrollo. Aún falta completar y probar la sincronización con el backend, el manejo de conflictos y la recuperación al cambiar de cuenta. No podemos prometer todavía que no existan duplicados en todos los casos.',
+  },
+  {
+    question: '¿Cómo se dividen los gastos?',
+    answer: 'El MVP tiene como requisito los repartos equitativos, por cantidades fijas y por porcentajes. Los formularios y el cálculo autoritativo del backend aún deben implementarse.',
+  },
+  {
+    question: '¿Qué pasa si alguien no confirma un pago?',
+    answer: 'El diseño previsto diferencia el pago declarado, confirmado y disputado. El flujo y sus controles de permisos aún no están implementados.',
+  },
+  {
+    question: '¿Puedo exportar mis datos?',
+    answer: 'La exportación CSV/PDF y la eliminación de cuenta están en el alcance del MVP, pero todavía no están disponibles en este prototipo.',
+  },
+  {
+    question: '¿Funciona en otros países o monedas?',
+    answer: 'El soporte de varias monedas y la conversión FX se han decidido para el MVP, pero todavía no están implementados de extremo a extremo. Antes del lanzamiento se definirá cómo guardar la moneda original, la tasa histórica y las reglas de redondeo.',
+  },
+];
+---
+
+<section class="py-16 sm:py-24 bg-surface-50" aria-labelledby="faq-heading">
+  <div class="container">
+    <header class="text-center max-w-2xl mx-auto mb-16">
+      <h2 id="faq-heading" class="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
+        Preguntas <span class="text-brand-600">frecuentes</span>
+      </h2>
+      <p class="text-lg text-text-secondary">
+        Respuestas rápidas. Si no está la tuya, escríbenos.
+      </p>
+    </header>
+
+    <div class="max-w-3xl mx-auto space-y-4">
+      {faqs.map((faq, index) => (
+        <details class="group card overflow-hidden" open={index === 0}>
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+            <h3 class="text-base font-medium text-text-primary pr-8">
+              {faq.question}
+            </h3>
+            <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-text-tertiary transition-transform duration-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+          <div class="px-6 pb-6 text-text-secondary leading-relaxed animate-in slide-in-from-bottom">
+            {faq.answer}
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <script>
+      document.querySelectorAll('details').forEach(details => {
+        const summary = details.querySelector('summary');
+        const icon = summary.querySelector('svg');
+        details.addEventListener('toggle', () => {
+          if (details.open) {
+            icon.style.transform = 'rotate(180deg)';
+          } else {
+            icon.style.transform = 'rotate(0deg)';
+          }
+        });
+      });
+    </script>
+  </div>
+</section>

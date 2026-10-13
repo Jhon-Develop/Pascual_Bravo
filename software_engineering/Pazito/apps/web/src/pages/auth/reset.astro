@@ -1,0 +1,266 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout>
+  <main id="main-content">
+    <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <a href="/" class="inline-flex items-center gap-2 mb-6" aria-label="Pazito - Inicio">
+            <svg class="w-10 h-10 text-brand-600" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="currentColor" />
+              <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="text-xl font-bold text-text-primary">Pazito</span>
+          </a>
+          <h1 class="text-2xl font-bold text-text-primary">Nueva contraseña</h1>
+          <p class="mt-2 text-text-secondary">Introduce tu nueva contraseña (mínimo 12 caracteres)</p>
+        </div>
+
+        <form id="reset-form" class="card p-6 sm:p-8 space-y-6" novalidate>
+          <div id="form-errors" class="hidden" role="alert"></div>
+
+          <div class="space-y-2">
+            <label for="password" class="label">Nueva contraseña <span class="text-status-error" aria-hidden="true">*</span></label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                class="input pr-12"
+                placeholder="Mínimo 12 caracteres"
+                required
+                minlength="8"
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                aria-label="Mostrar contraseña"
+                aria-hidden="true"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+            <p id="password-error" class="error-text hidden"></p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="confirmPassword" class="label">Confirmar contraseña <span class="text-status-error" aria-hidden="true">*</span></label>
+            <div class="relative">
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                autocomplete="new-password"
+                class="input pr-12"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                id="toggle-confirm-password"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
+                aria-label="Mostrar contraseña"
+                aria-hidden="true"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+            <p id="confirm-password-error" class="error-text hidden"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full mt-2">
+            <span class="btn-text">Guardar contraseña</span>
+            <span class="btn-loading hidden">
+              <svg class="spinner spinner-sm" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="31.4 31.4" />
+              </svg>
+            </span>
+          </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-text-secondary">
+          <a href="/app/#/auth/login" class="text-brand-600 hover:underline font-medium">Volver al inicio de sesión</a>
+        </p>
+
+        <div class="mt-8 text-center text-xs text-text-tertiary">
+          <p>Al continuar, aceptas nuestros <a href="#" class="underline hover:text-brand-600">Términos</a> y <a href="#" class="underline hover:text-brand-600">Privacidad</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const apiBaseUrl = (document.querySelector('meta[name="api-base-url"]')?.getAttribute('content') || '/api/v1').replace(/\/+$/, '');
+        // Check for token in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+          document.getElementById('reset-form').innerHTML = `
+            <div class="text-center animate-in slide-in-from-bottom">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-error-100 flex items-center justify-center">
+                <svg class="w-8 h-8 text-error-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h1 class="text-2xl font-bold text-text-primary mb-2">Token inválido</h1>
+              <p class="text-text-secondary mb-6">El enlace de restablecimiento no es válido o ha expirado.</p>
+              <a href="/app/#/auth/forgot" class="btn btn-primary">Solicitar nuevo enlace</a>
+            </div>
+          `;
+          return;
+        }
+
+        const form = document.getElementById('reset-form');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const togglePassword = document.getElementById('toggle-password');
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const formErrors = document.getElementById('form-errors');
+        const passwordError = document.getElementById('password-error');
+        const confirmPasswordError = document.getElementById('confirm-password-error');
+
+        let showPassword = false;
+        let showConfirmPassword = false;
+
+        function showError(input, errorElement, message) {
+          input.classList.add('input-error');
+          errorElement.textContent = message;
+          errorElement.classList.remove('hidden');
+        }
+
+        function clearError(input, errorElement) {
+          input.classList.remove('input-error');
+          errorElement.classList.add('hidden');
+        }
+
+        function clearAllErrors() {
+          clearError(passwordInput, passwordError);
+          clearError(confirmPasswordInput, confirmPasswordError);
+          formErrors.classList.add('hidden');
+          formErrors.textContent = '';
+        }
+
+        function showFormError(message) {
+          formErrors.textContent = message;
+          formErrors.classList.remove('hidden');
+        }
+
+        function setupToggle(toggleBtn, targetInput) {
+          let show = false;
+          toggleBtn.addEventListener('click', () => {
+            show = !show;
+            targetInput.type = show ? 'text' : 'password';
+            toggleBtn.innerHTML = show
+              ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.955 9.955 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>`
+              : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
+            toggleBtn.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+          });
+        }
+
+        setupToggle(togglePassword, passwordInput);
+        setupToggle(toggleConfirmPassword, confirmPasswordInput);
+
+        passwordInput.addEventListener('input', () => {
+          if (passwordInput.classList.contains('input-error') && passwordInput.value.length >= 8) {
+            clearError(passwordInput, passwordError);
+          }
+          if (confirmPasswordInput.value && confirmPasswordInput.value !== passwordInput.value) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Las contraseñas no coinciden');
+          } else if (confirmPasswordInput.value && confirmPasswordInput.value === passwordInput.value) {
+            clearError(confirmPasswordInput, confirmPasswordError);
+          }
+        });
+
+        confirmPasswordInput.addEventListener('input', () => {
+          if (confirmPasswordInput.classList.contains('input-error') && confirmPasswordInput.value === passwordInput.value) {
+            clearError(confirmPasswordInput, confirmPasswordError);
+          }
+        });
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          clearAllErrors();
+
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          let hasError = false;
+
+          if (!password) {
+            showError(passwordInput, passwordError, 'La contraseña es obligatoria');
+            hasError = true;
+          } else if (password.length < 12) {
+            showError(passwordInput, passwordError, 'Mínimo 12 caracteres');
+            hasError = true;
+          }
+
+          if (!confirmPassword) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Confirma tu contraseña');
+            hasError = true;
+          } else if (confirmPassword !== password) {
+            showError(confirmPasswordInput, confirmPasswordError, 'Las contraseñas no coinciden');
+            hasError = true;
+          }
+
+          if (hasError) return;
+
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const btnText = submitBtn.querySelector('.btn-text');
+          const btnLoading = submitBtn.querySelector('.btn-loading');
+          submitBtn.disabled = true;
+          btnText.classList.add('hidden');
+          btnLoading.classList.remove('hidden');
+
+          try {
+            const response = await fetch(`${apiBaseUrl}/auth/reset-password`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
+              body: JSON.stringify({ token, password }),
+              credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || 'Error al restablecer la contraseña');
+            }
+
+            // Show success state
+            form.innerHTML = `
+              <div class="text-center animate-in slide-in-from-bottom">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-success-100 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-text-primary mb-2">Contraseña actualizada</h1>
+                <p class="text-text-secondary mb-6">Tu contraseña se ha actualizado correctamente. Redirigiendo al inicio de sesión...</p>
+              </div>
+            `;
+
+            setTimeout(() => {
+              window.location.href = '/app/#/auth/login';
+            }, 3000);
+          } catch (error) {
+            showFormError(error.message);
+          } finally {
+            submitBtn.disabled = false;
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+          }
+        });
+      });
+    </script>
+  </main>
+</Layout>
